@@ -1,7 +1,11 @@
+#M---------------------------------------------------------------------------
+#M                            MODULE DESCRIPTION
+#M---------------------------------------------------------------------------
+#M
+#M 
+#M
+#M---------------------------------------------------------------------------
 package Adms::Service;
-#-------------------------------------------------------------------------------
-# Downloaded from https://github.com/hpham-abc123/AdmsSkeletonPerlCode.git
-#-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 # Used modules
@@ -14,6 +18,7 @@ use Data::Dumper;
 
 use lib 'lib';
 use Adms::HelperDAO;
+use Adms::Helper;
 
 #-------------------------------------------------------------------------------
 # Used constants
@@ -33,19 +38,11 @@ use constant LSN_DATA_UP_CMD_CHECK => 'timeout 1 lsn_data -o -n ';
 our $hostname = hostname();
                         
 #-------------------------------------------------------------------------------
-# Function : _from_cmd return 
-#-------------------------------------------------------------------------------
-sub _from_cmd{
-    my $cmd = shift;
-    return  `$cmd`;
-}
-
-#-------------------------------------------------------------------------------
 # Function : is_online - return 1 if online otherwise 0
 #-------------------------------------------------------------------------------
 sub is_online{
 
-    my $from_cmd_fn = shift || \&_from_cmd; #use for dependency injection
+    my $from_cmd_fn = shift || \&Adms::Helper::from_cmd; #use for dependency injection
     my %processes = ();
 
     my $cmd = q{ps -u enmac -u oracle -o comm | grep 'lanmon\|hbeat\|msgserver\|tmngr\|tnslsnr\|init_shmem'};
@@ -71,7 +68,7 @@ sub am_i_highest_priority_running{
     foreach my $priority (sort keys %{$server_list} ){
         $srv = $server_list->{$priority};
         $online_cmd_check = LSN_DATA_UP_CMD_CHECK . ' "' . $srv . '"';
-        $st = _from_cmd($online_cmd_check);
+        $st = Adms::Helper::from_cmd($online_cmd_check);
         if ($st =~ /UP/){
             #print("$srv eq $hostname\n");
             return ($srv eq $hostname) ? 1 : 0;

@@ -10,8 +10,8 @@ use Adms::Service;
 # Mocking the _from_cmd function
 my $mock_from_cmd_result_str = undef;
 my @mock_from_cmd_result = [];
-my $mock_from_cmd = Test::Mock::Simple->new(module => 'Adms::Service');
-$mock_from_cmd->add('_from_cmd', sub {
+my $mock_from_cmd = Test::Mock::Simple->new(module => 'Adms::Helper');
+$mock_from_cmd->add('from_cmd', sub {
     my $cmd = shift;
     if ($cmd eq 'ps -u enmac -u oracle -o comm | grep \'lanmon\|hbeat\|msgserver\|tmngr\|tnslsnr\|init_shmem\'') {
         return split(' ', $mock_from_cmd_result_str);
